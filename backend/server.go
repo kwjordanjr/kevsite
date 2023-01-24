@@ -1,8 +1,8 @@
 package backend
 
 import (
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,6 +29,6 @@ func Server() error {
 		c.HTML(http.StatusOK, "meta.html", nil)
 	})
 	// run gin server
-	r.Run(os.Getenv("PORT"))
+	log.Fatal(r.Run(":9000"))
 	return nil
 }
