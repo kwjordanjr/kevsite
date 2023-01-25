@@ -14,8 +14,11 @@ RUN rm -rf /usr/local/go && \
 
 ENV PATH=${PATH}:/usr/local/go/bin
 
+# copy in our files to be built
 COPY . .
 
+# set gin build to 'release' and build
+ENV GIN_MODE=RELEASE
 RUN CGO_ENABLED=0 go build -installsuffix cgo -o app 
 
 # now we have the distroless image that we will actually be deploying 

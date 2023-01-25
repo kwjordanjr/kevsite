@@ -1,13 +1,17 @@
 package backend
 
 import (
-	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Server() error {
+	// this will only be called for the production build
+	if os.Getenv("GIN_MODE") == "RELEASE" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	// create our gin instance
 	r := gin.Default()
 	// list the html we want here
@@ -29,6 +33,9 @@ func Server() error {
 		c.HTML(http.StatusOK, "meta.html", nil)
 	})
 	// run gin server
-	log.Fatal(r.Run(":9000"))
+	err := r.Run(":9000")
+	if err != nil {
+		return err
+	}
 	return nil
 }
