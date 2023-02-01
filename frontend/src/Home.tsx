@@ -4,6 +4,9 @@ const Home = () => {
             <h1>
                 Kevin Jordan
             </h1>
+            <p>
+                React App embedded in Golang
+            </p>
         </div>
     )
 }
