@@ -14,12 +14,24 @@ RUN rm -rf /usr/local/go && \
 
 ENV PATH=${PATH}:/usr/local/go/bin
 
+# download nodeJS
+RUN wget -q https://nodejs.org/dist/v18.3.0/node-v18.3.0-linux-x64.tar.xz \
+    && tar -xJvf node-v18.3.0-linux-x64.tar.xz -C /usr/local --strip-components=1 \
+    && rm node-v18.3.0-linux-x64.tar.xz \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+# download yarn
+RUN npm install -g yarn
+
 # copy in our files to be built
 COPY . .
 
 # set gin build to 'release' and build
 ENV GIN_MODE=RELEASE
 RUN CGO_ENABLED=0 go build -installsuffix cgo -o app 
+
+RUN cd ./frontend &&
+    yarn build 
 
 # now we have the distroless image that we will actually be deploying 
 FROM gcr.io/distroless/static-debian11
@@ -31,8 +43,7 @@ EXPOSE 9000
 COPY --from=0 /app ./
 
 # also copy in the frontend
-
-COPY --from=0 /frontend ./frontend
+COPY --from=0 /frontend/build ./frontend/build
 
 # run our program
 CMD ["./app"]
